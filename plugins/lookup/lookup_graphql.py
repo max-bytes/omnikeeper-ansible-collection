@@ -1,5 +1,11 @@
-# TODO
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright: (c) 2022, MaxBytes GmbH
+# Apache License Version 2.0 (see https://www.apache.org/licenses/LICENSE-2.0)
+
 """
+Lookup function for interacting with omnikeeper's GraphQL API
 """
 
 from __future__ import absolute_import, division, print_function
@@ -7,12 +13,98 @@ __metaclass__ = type
 
 # TODO
 DOCUMENTATION = """
+name: lookup_graphql
+  author: Maximilian Csuk
+  short_description: Queries omnikeeper's GraphQL endpoint
+  description:
+    - Queries omnikeeper's GraphQL endpoint
+  options:
+    query:
+      description:
+        - The GraphQL query string
+      required: True
+    username:
+      description:
+        - Username to log into omnikeeper, alternative: token
+      required: False
+    password:
+      description:
+        - Password for user to log into omnikeeper, alternative: token
+      required: False
+    token:
+      description:
+        - An OAuth 2.0 access token, alternative: username + password
+      required: False
+    url:
+      description:
+        - The URL to the omnikeeper instance
+      required: True
+    oauth_insecure_transport:
+      description:
+        - Set to true to circumvent error if the oauth provider is not reachable via a secure HTTPS connection
+      required: False
+      default: False
+    graph_variables:
+      description:
+        - Dictionary of keys/values to pass to GraphQL
+      required: False
+  requirements:
+    - oauthlib
+    - requests_oauthlib
+    - gql[aiohttp]
 """
 
-# TODO
+EXAMPLES = """
+- name: ansible omnikeeper experiment
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: "Install required python libraries" # only required when not already installed
+    pip:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - oauthlib 
+      - requests-oauthlib
+      - gql[aiohttp]
+
+  - set_fact:
+      query_variables:
+        hostname_regex: '^host.*$'
+      query_string: |
+        query ($hostname_regex: String!) {
+          traitEntities(layers: ["tsa_cmdb"]) {
+            host {
+              filtered(filter: {hostname: {regex: {pattern: $hostname_regex}}}) {
+                entity {
+                  hostname
+                  interfaces {
+                    entity {
+                      ip
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+  - name: perform query
+    set_fact:
+      query_response: "{{ query('maxbytes.omnikeeper.lookup_graphql', query_string, query_variables=query_variables, url='https://[replace-me]', username='[replace-me]', password='[replace-me]') }}"
+  - name: Debug print
+    ansible.builtin.debug:
+      var: query_response
+"""
+
 RETURN = """
+  data:
+    description:
+      - Data from the GraphQL endpoint
+    type: dict
 """
 
+# implementation inspired by https://github.com/nautobot/nautobot-ansible/blob/develop/plugins/lookup/lookup_graphql.py
 import os
 import traceback
 import urllib.request, json
