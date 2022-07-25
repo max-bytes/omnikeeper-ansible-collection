@@ -1,0 +1,12 @@
+namespace: "maxbytes"
+name: "omnikeeper"
+version: "1.0.0"
+readme: "README.md"
+authors:
+    - "Maximilian Csuk"
+dependencies:
+license:
+    - "Apache 2.0"
+tags:
+    - collection
+repository: "https://github.com/max-bytes/omnikeeper-ansible-collection"
