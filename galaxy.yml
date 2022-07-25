@@ -4,7 +4,7 @@ version: "1.0.0"
 readme: "README.md"
 authors:
     - "Maximilian Csuk"
-dependencies: []
+dependencies: {}
 license:
     - "Apache 2.0"
 tags:
