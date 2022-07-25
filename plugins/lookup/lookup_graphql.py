@@ -11,9 +11,8 @@ Lookup function for interacting with omnikeeper's GraphQL API
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-# TODO
 DOCUMENTATION = """
-name: lookup_graphql
+  name: lookup_graphql
   author: Maximilian Csuk
   short_description: Queries omnikeeper's GraphQL endpoint
   description:
@@ -55,46 +54,46 @@ name: lookup_graphql
 """
 
 EXAMPLES = """
-- name: ansible omnikeeper experiment
-  hosts: localhost
-  gather_facts: no
-  connection: local
-  tasks:
-  - name: "Install required python libraries" # only required when not already installed
-    pip:
-      name: "{{ item }}"
-      state: latest
-    with_items:
-      - oauthlib 
-      - requests-oauthlib
-      - gql[aiohttp]
+  - name: ansible omnikeeper experiment
+    hosts: localhost
+    gather_facts: no
+    connection: local
+    tasks:
+    - name: "Install required python libraries" # only required when not already installed
+      pip:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - oauthlib 
+        - requests-oauthlib
+        - gql[aiohttp]
 
-  - set_fact:
-      query_variables:
-        hostname_regex: '^host.*$'
-      query_string: |
-        query ($hostname_regex: String!) {
-          traitEntities(layers: ["tsa_cmdb"]) {
-            host {
-              filtered(filter: {hostname: {regex: {pattern: $hostname_regex}}}) {
-                entity {
-                  hostname
-                  interfaces {
-                    entity {
-                      ip
+    - set_fact:
+        query_variables:
+          hostname_regex: '^host.*$'
+        query_string: |
+          query ($hostname_regex: String!) {
+            traitEntities(layers: ["tsa_cmdb"]) {
+              host {
+                filtered(filter: {hostname: {regex: {pattern: $hostname_regex}}}) {
+                  entity {
+                    hostname
+                    interfaces {
+                      entity {
+                        ip
+                      }
                     }
                   }
                 }
               }
             }
           }
-        }
-  - name: perform query
-    set_fact:
-      query_response: "{{ query('maxbytes.omnikeeper.lookup_graphql', query_string, query_variables=query_variables, url='https://[replace-me]', username='[replace-me]', password='[replace-me]') }}"
-  - name: Debug print
-    ansible.builtin.debug:
-      var: query_response
+    - name: perform query
+      set_fact:
+        query_response: "{{ query('maxbytes.omnikeeper.lookup_graphql', query_string, query_variables=query_variables, url='https://[replace-me]', username='[replace-me]', password='[replace-me]') }}"
+    - name: Debug print
+      ansible.builtin.debug:
+        var: query_response
 """
 
 RETURN = """
