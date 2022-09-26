@@ -73,7 +73,7 @@ EXAMPLES = """
                     hostname_regex: '^host.*$'
                 query_string: |
                     query ($hostname_regex: String!) {
-                        traitEntities(layers: ["tsa_cmdb"]) {
+                        traitEntities(layers: ["cmdb"]) {
                             host {
                                 filtered(filter: {hostname: {regex: {pattern: $hostname_regex}}}) {
                                     entity {
